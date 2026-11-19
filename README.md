@@ -2,7 +2,9 @@
 
 Projet fil rouge du cours **BI, Dashboards & Data Storytelling** (Master 2, Programme Grande École, Paris School of Business). Enseignant : Olivier Mamavi, professeur associé. Auteures : Ingryd Lo Tierzo Silva et Sara Lhasseni.
 
-Ce dépôt documente les décisions clés du projet, la consigne de la séance en cours et l'historique des rendus. Il ne contient ni les données brutes ni les enregistrements de cours.
+Ce dépôt documente les décisions clés du projet, les consignes, l'historique des rendus et le plan de travail en cours. Il ne contient ni les données brutes ni les enregistrements de cours.
+
+**Prochaine échéance : vendredi 20 novembre 2026**, application complète, cahier de recette et registre des écarts (séance 5). Revue croisée par une autre équipe le 21 novembre (séance 6). Voir la section 5.
 
 ## 1. Le projet en bref
 
@@ -10,107 +12,182 @@ Ce dépôt documente les décisions clés du projet, la consigne de la séance e
 | --- | --- |
 | Rôle | Consultante data pour la Commission européenne |
 | Client | L'Observatoire des marchés publics, qui vérifie que les achats publics fonctionnent bien dans toute l'Europe |
-| Données | 149 813 marchés attribués de 2009 à 2017 dans 33 pays, après nettoyage. Une ligne est une **attribution**, pas un marché (identifiant ID_AW). Un fichier à part contient 6 022 procédures rares, jamais empilées avec le principal |
-| Livrable final | Une application web interactive, ouverte par un lien public, en quatre vues : globale, analyse, segmentation, exploration |
+| Données | Deux fichiers disjoints : un échantillon principal (150 147 lignes brutes) et les procédures rares (6 024 lignes brutes), 22 colonnes, 2009-2017, 33 pays. Une ligne est une **attribution**, pas un marché (identifiant ID_AW). Après dédoublonnage de 336 lignes : 155 835 lignes au total. Les deux fichiers ne s'empilent jamais |
+| Livrable final | Une application web interactive, ouverte par une URL publique sans authentification, en quatre vues : globale, analyse, segmentation, exploration |
 | Mission | Préparer l'exercice de surveillance 2018 : non pas décrire le marché, mais décider où agir |
 
-Trois questions, chacune avec une variable imposée à expliquer :
+Trois questions, chacune avec une variable imposée à expliquer. La séance 5 reformule les décisions à outiller.
 
-| Axe | Question | Variable cible | Décision à éclairer |
+| Axe | Question | Variable cible | Décision à outiller (séance 5) |
 | --- | --- | --- | --- |
-| A · Concurrence | Où y a-t-il trop peu d'entreprises qui répondent ? | NUMBER_OFFERS | Quels 20 segments instruire |
-| B · PME | Comment aider les petites entreprises à gagner ? | B_CONTRACTOR_SME | Découper en 6 à 10 lots ? |
-| C · Budget | Où l'argent public est-il dépensé de façon anormale ? | AWARD_VALUE_EURO | Quels marchés auditer (5 %) |
+| A · Concurrence | Où y a-t-il trop peu d'entreprises qui répondent ? | NUMBER_OFFERS | Sur quels segments déclencher une revue pour maximiser la dépense replacée en concurrence effective, avec la capacité d'instruction ? |
+| B · PME | Comment aider les petites entreprises à gagner ? | B_CONTRACTOR_SME | Quel dispositif d'allotissement recommander, sur quel périmètre, avec quel gain attendu et quel effet indésirable ? |
+| C · Budget | Où l'argent public est-il dépensé de façon anormale ? | AWARD_VALUE_EURO | Où concentrer l'audit, sur quels segments aux montants anormaux au regard de leurs caractéristiques ? |
 
-Idée centrale du cours : la BI sert à aider à décider. Un tableau de bord est une hypothèse causale rendue visible et vérifiable, pas une pile de graphiques.
+Idée centrale du cours : la BI sert à aider à décider. Un tableau de bord est une hypothèse causale rendue visible et vérifiable, pas une pile de graphiques. Règle qui commande tout : **un indicateur se recalcule à chaque filtre, il ne se moyenne jamais.**
 
-## 2. Consigne de la séance 4 : architecture décisionnelle
+## 2. Calendrier et historique des rendus
 
-**Objectif.** Les six indicateurs sont testés, mais il n'existe pas encore de tableau de bord. Il manque une décision de conception : à quoi sert chaque écran, pour qui, et quelle décision permet-il de prendre ? La séance produit un plan, pas un prototype, et se fait sans outil de visualisation.
-
-**Déroulé.** Reprise des livrables (15h00), briefing (15h20), étape 1 note de modélisation (16h05), étape 2 maquettes des quatre vues avec ordinateurs fermés (16h45), étape 3 huit user stories (17h45), débriefing (18h20).
-
-### Étape 1 · Poser le modèle de données
-
-- Déclarer le **grain** : une phrase pour dire ce que représente une ligne de la table de faits.
-- **Classer chaque KPI** : mesure brute stockée ligne à ligne, agrégat calculé selon les filtres, ou indicateur (rapport de deux agrégats dont le dénominateur bouge avec les filtres).
-- Lister les **six dimensions** (géographique, temporelle, sectorielle, procédure, acheteur, contrat) : nombre de modalités, traitement des modalités résiduelles, hiérarchie de drill-down.
-- Fixer **trois règles transversales** : seuil d'effectif minimal et comportement en dessous ; périmètre par défaut de chaque vue (notamment l'axe PME, dont la fenêtre temporelle est restreinte) ; répartition des deux fichiers entre les écrans.
-
-### Étape 2 · Maquetter les quatre vues
-
-| Vue | Question | Contenu imposé | Interactions |
+| Date | Séance ou rendu | Contenu | Statut |
 | --- | --- | --- | --- |
-| 1. Globale | Où en sommes-nous ? | Six indicateurs au maximum, chacun avec son effectif | Filtres de contexte |
-| 2. Analyse | Pourquoi ? | Les relations testées en séance 3, rendues visibles | Choix de la relation, stratification activable |
-| 3. Segmentation | Où agir ? | Croisements pays, secteur, procédure ; priorisation par valeur, pas par taux | Filtres croisés, tris multiples |
-| 4. Exploration | Quel cas précis ? | Descente jusqu'à la ligne | Drill-down depuis les trois autres vues |
+| Avant le 26 sept. | S1 · Onboarding | Rôles et journal de bord, trois axes reformulés en problèmes décisionnels sous contrainte, confrontation des indicateurs officiels de la Commission (soumissionnaire unique, part des PME), URL publique vide. Power BI exclu sans validation écrite | Rendu |
+| 26 sept. 2026 | S2 · Description et analyse des données | Note d'audit de 3 pages : grain, six anomalies chiffrées, périmètre d'exploitabilité, choix statistiques, journal des transformations. Dictionnaire des distributions | Rendue, corrigée sur quatre points dans la note de la S3 |
+| 3 oct. 2026 | S3 · Hypothèses | Hypothèses H1 à H6 écrites avant tout test ; bases nettoyées (fichiers FINAL) | Déposées |
+| 5 et 13 oct. | S3 · Étapes 1 à 4 | Base consolidée, variables, hypothèses, relations explorées et contrôlées ; version harmonisée du 13 octobre ; carte causale | Rendues |
+| 13 oct. 2026 | S3 · Étape 5 | Note de tests et de conception : six fiches KPI, carte causale à quatre niveaux, recommandation du 6-10 lots | Rendue |
+| 17 oct. 2026 | S4 · Architecture décisionnelle | Présentation de la note par Ingryd et Sara, puis travail d'architecture : modèle de données, quatre vues maquettées, huit user stories | Faite |
+| Novembre 2026 | Rendu 4 | `livrables/S4_BI_Livrable_Observatoire_marches_publics.docx` : note de modélisation, maquettes annotées, user stories, annexe sur le choix des six KPI | Rendu, évalué, voir section 3 |
+| 14 nov. 2026 | S5 · Construction de l'application | Couche de mesures, vues globale et segmentation. Livrable de fin de séance : URL publique et fiche de paramétrage des mesures | État à confirmer |
+| 19 nov. 2026 | Prototype HTML | Fichier « Observatoire européen des marchés publics · Tableau de bord.html » déposé sur `main` (vues 1 à 4) | Déposé, voir section 5 |
+| **20 nov. 2026** | **S5 · Échéance** | Application complète, cahier de recette, registre des écarts, journal de bord | **À rendre** |
+| 21 nov. 2026 | S6 · Revue croisée | Une autre équipe teste l'application sur une question qu'elle formule ; la séance audite ce qui est livré le 20 | À préparer |
+| Plus tard | S7 et S8 | Recommandations, puis jury (soutenance) | |
 
-Une feuille par vue, avec pour chaque bloc : l'indicateur affiché, son dénominateur, son effectif minimal, le type de visualisation et la justification de l'encodage en une ligne. Une cinquième feuille dessine les chemins de navigation (un chemin qui ne mène nulle part signale un écran mort). La vue 2 doit afficher au moins une relation testée, sa stratification par un confondant et les effectifs des deux groupes : si elle ressemble à la vue 1 avec plus de graphiques, elle est à refaire.
+## 3. Retour reçu sur le rendu de la séance 4
 
-### Étape 3 · Écrire les user stories
+Le retour reconnaît que toutes les exigences de la séance 4 sont traitées et que les chiffres principaux, recalculés par l'évaluateur, sont justes : 27,7 %, 53,7 %, gain simulé de +5,4 points [+1,5 ; +9,2], intervalles à ±17 et ±10 points, parts de la liste d'audit. Points salués : grain et étoile, classement des KPI, nomenclatures réparées (zéro initial des CPV, lots inconnus distingués des non-allotis), seuils d'effectif différenciés, relation définitionnelle grisée « rien », arbitrage PME contre concurrence chiffré, navigation vérifiée.
 
-Huit stories au format imposé : *En tant que [utilisateur identifié], je veux [objectif précis], afin de [décision].* Quatre champs complémentaires : indicateurs mobilisés, vue concernée, interaction nécessaire, décision déclenchée. Couverture obligatoire : deux stories par axe au minimum, trois profils différents (responsable de la surveillance, analyste de l'Observatoire, décideur politique) et une story qui traverse plusieurs vues. Une story qui se termine par « afin de mieux comprendre » est descriptive : elle est à réécrire ou à supprimer.
+La faiblesse principale tient en une phrase : **le dossier va plus loin en inférence que ce que ses propres résultats autorisent.** Corrections demandées, par priorité :
 
-### Livrables (à déposer avant la fin de la séance)
+| Priorité | Sujet | Ce qui est reproché | Correction attendue |
+| --- | --- | --- | --- |
+| 1 | KPI 4, gain simulé | L'effet change de sens selon le pays (1,30 brut, 1,15 à valeur contrôlée, 1,06 avec le pays, inversé en DE et UK) : « causal plausible » est trop fort. Le gain applique à la France un rapport estimé sur tous les pays. Le rapport figé sous filtre affiche une précision fausse (par exemple sur les seuls services). Biais de sélection non discuté. DE et UK sans intervalle, contre la règle du bloc 4 de la vue 1 | Renommer le KPI (« écart ajusté » plutôt que « gain simulé »), le calculer par pays avec son intervalle, ne l'afficher que là où il a été estimé, parler d'« association ajustée, hétérogène » |
+| 2 | Indice d'anomalie (KPI 6) | La strate CPV × type de contrat contrôle trop peu : avec 489 marchés pesant 36,6 % du montant, l'indice détecte surtout les plus gros contrats de chaque strate. La story 8 mélange les 489 marchés à z > 3 et l'audit de 5 % (7 460 marchés) | Ajouter au moins pays, année et classe de lots, idéalement un résidu de régression sur le logarithme du montant ; fixer quelle liste sert à l'audit |
+| 3 | Chiffres de la note | 149 813 et 336 doublons, 6 022 lignes pour un fichier de 6 024, ne sont pas expliqués ensemble | Voir « Points à vérifier » : 336 = 334 dans le principal + 2 dans les rares si les deux fichiers sont dédoublonnés |
+| 3 | Renvois au cours | « Erreur sanctionnée n° 15 » (deux fois) | L'empilement des deux fichiers est l'erreur sanctionnée **n° 11** |
+| 3 | Valeur sentinelle | Le KPI 1 exclut 940, mais l'annexe cite des cas « jusqu'à 999 offres » | Dire si 999 est exclu ; les médianes y sont insensibles, pas les taux ni les effectifs |
+| 3 | Code NOC | « Sens du code non confirmé », mais NOC classée définitionnelle et exclue du KPI 1 | Trancher, ou retirer le statut définitionnel |
+| 3 | Montant pondéré (KPI 5) | L'échantillon reproduit mal la queue : chaque très gros marché est multiplié par environ 15 | Tester la part du Royaume-Uni sans le dernier centile avant de construire la story 12 dessus |
+| 3 | « Prospectif » | La médiane et l'indice d'anomalie sont dits prospectifs ; la note écrit elle-même que la médiane est associée à l'offre unique « sans la précéder » | Seul le KPI 4 est avancé, sous les réserves ci-dessus |
+| 3 | User stories | US1 contredit la vue 3 (tri par taux, alors que la vue 3 trie par valeur en jeu). US10 et US12 font manipuler le décideur, qui ne passe pas plus de 2 minutes dans l'outil. US7 est un contrôle de qualité, pas une décision | Réécrire US1, US7, US10 et US12 |
+| 4 | Charge de construction | Six KPI dont un modèle logistique et des scores par strate : l'architecture la plus lourde | Préparer les deux calculs modélisés hors de l'outil et les importer comme colonnes |
 
-| Livrable | Format | Contenu |
+## 4. Consigne de la séance 5 : construire l'application
+
+**Objectif.** Transformer le plan (modèle, quatre vues, huit user stories) en application décisionnelle qui fonctionne, au service des pouvoirs publics, sur les trois axes. Le critère de réussite n'est pas l'apparence de l'écran : c'est la capacité de l'application à répondre correctement aux user stories, sur les trois axes, et à une question que l'équipe n'a pas prévue.
+
+**Outil libre** (Looker Studio, Tableau Public, Streamlit, Lovable, artefact Claude, ou autre), à une condition non négociable : **URL publique, sans authentification.** Vérifier avant de construire :
+
+- l'URL s'ouvre en navigation privée, depuis un autre poste ;
+- l'outil recalcule à partir des lignes, pas d'agrégats figés ;
+- l'outil supporte le volume (150 147 lignes) avec trois filtres croisés ;
+- aucune clé, aucun identifiant dans le code ou les données publiées ;
+- avec un outil génératif, chaque formule est relue et testée.
+
+**Les six étapes.**
+
+| Étape | Contenu |
+| --- | --- |
+| 1 · Couche de mesures | Avant le moindre graphique. Import propre (séparateur décimal point), deux sources distinctes jamais empilées, dédoublonnage de la séance 2. Chaque indicateur est un rapport d'agrégats : numérateur et dénominateur sont deux champs séparés, le quotient est recalculé à l'affichage. Effectif à côté du taux ; sous le seuil, indicateur masqué ou grisé avec mention de l'effectif. Contrôle sans filtre : retrouver les valeurs de contrôle du guide (taux de soumissionnaire unique, médiane des montants, part des PME parmi les renseignés), tout écart expliqué |
+| 2 · Vue globale | Six indicateurs au plus, trois axes, effectif visible sans clic, périmètre écrit à l'écran (notamment la fenêtre de l'axe PME). Filtres de contexte uniquement, chacun relié à une user story. Au moins un indicateur avancé à côté des indicateurs de résultat |
+| 3 · Vue segmentation | Croisements pays, secteur, procédure ; filtres croisés, tris multiples. Priorisation propre à chaque axe : A, segments classés par montant en jeu (pas par taux brut), paramètre réglable de capacité d'instruction N avec montant cumulé couvert, procédures sans mise en concurrence exclues ou signalées ; B, segments où l'allotissement est le plus faible et l'enjeu PME le plus fort, avec le taux de renseignement de la variable PME affiché ; C, segments dont les montants s'écartent de ce qu'annoncent leurs caractéristiques (contrat, secteur, procédure), grain d'attribution traité. Combiner trois filtres et vérifier l'affichage sous le seuil |
+| 4 · Vue analyse | Pour chaque axe, au moins une relation de la séance 3 visible avec sa stratification par un confondant et les effectifs des deux groupes. L'utilisateur choisit la relation et active la stratification |
+| 5 · Vue exploration | Descente jusqu'à la ligne par drill-down depuis les trois autres vues. Aucun écran mort : vérifier le schéma de navigation de la séance 4 dans l'application réelle |
+| 6 · Recette | Exécuter les huit user stories : réussite ou échec, temps, cause de l'échec, correction. La story du décideur politique échoue au-delà de deux minutes. Puis un membre d'une autre équipe teste l'application sur une question qu'il formule lui-même. Une story impossible signale un filtre manquant, une mesure mal codée ou une story mal écrite : dire lequel |
+
+**Livrables.**
+
+| Livrable | Échéance | Contenu |
 | --- | --- | --- |
-| Note de modélisation | 2 pages | Grain, classement des six KPI, tableau des dimensions, trois règles transversales |
-| Maquettes annotées | 5 feuilles photographiées | Quatre vues et schéma de navigation |
-| User stories | Un tableau | Huit stories au format imposé |
+| URL publique et fiche de paramétrage des mesures | 14/11, fin de séance | Pour chaque indicateur : formule implémentée, numérateur, dénominateur, effectif affiché, seuil, comportement sous le seuil, valeur de contrôle obtenue |
+| Application complète | 20/11 | Quatre vues fonctionnelles couvrant les trois axes, filtres opérants, drill-down, effectifs affichés |
+| Cahier de recette | 20/11 | Huit user stories testées : résultat, temps, cause d'échec, correction |
+| Registre des écarts | 20/11, une demi-page | Ce qui a changé entre maquette et application, et pourquoi ; tout écart imposé par l'outil est signalé comme tel |
+| Journal de bord | À chaque session de travail | Mis à jour y compris entre les séances |
 
-### Évaluation
+**Grille (20 points).**
 
-Notée sur 20, elle alimente le critère « dashboard, architecture et interactivité » de la grille du jury.
-
-| Critère | Points | Attendu | Piège |
+| Critère | Pts | Valorisé | Sanctionné |
 | --- | --- | --- | --- |
-| Modèle et règles transversales | 5 | Grain cohérent avec la séance 2, distinction mesure / agrégat / indicateur, trois règles chiffrées | Modèle calqué sur les colonnes du fichier ; seuil d'effectif non fixé |
-| Architecture des quatre vues | 6 | Chaque vue répond à une question distincte, vue 2 réellement explicative | Vue globale surchargée ; vue 2 indistincte de la vue 1 ; pas de drill-down |
-| Justification des encodages | 4 | Choix argumenté par la précision perceptive | Camembert, carte en couleurs pour une comparaison fine, axe tronqué |
-| User stories | 5 | Décision concrète, profils différenciés, trois axes couverts | Story se terminant par « afin de mieux comprendre » |
+| Exactitude des mesures | 4 | Indicateurs recalculés à chaque filtre, effectifs associés, valeurs de contrôle retrouvées ou écart expliqué | Moyenne de taux, somme non dédoublonnée, fichiers empilés |
+| Vue globale | 3 | Six indicateurs au plus, trois axes couverts, périmètre affiché | Surcharge, pourcentage sans effectif, axe absent |
+| Vue analyse | 4 | Une relation stratifiée par axe, effectifs visibles, aucune formulation causale abusive | Vue descriptive, absence de confondant, « X entraîne Y » sur une association |
+| Vue segmentation | 4 | Priorisation par valeur, contrainte de ressource paramétrable, logique propre à chaque axe | Classement par taux brut, petits segments en tête, procédures non concurrentielles en tête |
+| Exploration et navigation | 2 | Drill-down depuis les trois vues jusqu'à la ligne | Écran mort, exploration isolée |
+| Recette et déploiement | 3 | URL publique fonctionnelle, temps de réponse acceptable, recette réelle et diagnostiquée | **URL inaccessible le 20/11 : 0 à l'ensemble du critère** |
 
-**Connaissances à mobiliser.** Modélisation dimensionnelle (Kimball) ; architecture de l'information (Shneiderman, 1996) ; modèle imbriqué (Munzner, 2009) ; perception graphique (Cleveland et McGill, 1984) ; sémiologie graphique (Bertin, 1967) ; tableau de bord et contrôle de gestion (Kaplan et Norton) ; usage diagnostique et interactif (Simons, 1995) ; règle d'affichage reconduite : tout pourcentage est accompagné de son effectif.
+**Pièges signalés.** Commencer par les graphiques ; faire générer l'application par une IA sans vérifier (recalculer à la main trois valeurs filtrées) ; traiter un axe et en oublier deux ; taux juste globalement mais faux filtré (tester chaque indicateur sur un pays et une année contre un calcul manuel) ; repousser les vues analyse et exploration au dernier soir ; abandonner la maquette au premier obstacle sans consigner l'écart ; accumuler des filtres (un filtre sans user story est retiré) ; tester l'URL uniquement depuis sa session ; recette complaisante (une story réussie en huit minutes pour le décideur est un échec).
 
-### Évaluation du projet entier
+**Connaissances à mobiliser.** Additivité des mesures (Kimball) ; architecture de l'information (Shneiderman, 1996) ; perception graphique (Cleveland et McGill, 1984) ; sémiologie graphique (Bertin, 1967) ; facteur de mensonge et rapport données-encre (Tufte, 1983) ; paradoxe de Simpson ; usage interactif (Simons, 1995) ; petits effectifs et classements (seuil d'effectif ou graphique en entonnoir, Spiegelhalter, 2005) ; règle d'affichage reconduite : tout pourcentage avec son effectif absolu, y compris après filtrage.
 
-Le projet compte pour 50 % de la note (60 % jury, 20 % épreuve de requêtes de 5 questions en 8 minutes, 20 % pairs) ; l'examen individuel de 2 heures sans documents compte pour les 50 % restants et porte sur le jeu de données du cours. Critères du jury : rigueur du traitement des données (5), recommandations prescriptives (5), construction des KPI (4), qualité analytique (4), dashboard et architecture (4), rapport, soutenance et journal (3 + 3 + 2). L'usage de l'IA est permis, à condition de comprendre assez pour la corriger et de pouvoir défendre chaque choix à l'oral.
+## 5. Plan d'action jusqu'au 20 novembre
 
-## 3. Historique des rendus
+Le prototype HTML déposé sur `main` est le point de départ. D'après un premier regard sur le fichier (à confirmer en l'ouvrant) : il contient les quatre vues, un glossaire, des recommandations et des chemins de navigation ; les lignes du fichier des procédures rares y sont embarquées (environ 600 Ko), mais plusieurs blocs du fichier principal (seuils, montants, parts de PME, liste d'audit) sont écrits en dur avec les valeurs de la note de la séance 3. La consigne exige l'inverse : un recalcul à chaque filtre. C'est le premier risque de l'étape « exactitude des mesures ».
 
-| Date | Rendu | Contenu | Statut |
+### A. Bloquants, à traiter en premier
+
+| # | Action | Pourquoi | Fait |
 | --- | --- | --- | --- |
-| Séance 2 | Note d'audit des données | Diagnostic des anomalies : doublons, valeurs manquantes, codes à normaliser ; 13 règles de nettoyage qui ramènent la base de 156 171 à 155 835 lignes | Rendu, puis corrigé sur quatre points dans la note de la séance 3 |
-| 3 octobre 2026 | Hypothèses H1 à H6 | Écrites avant tout test, jugées après | Déposées |
-| 10 octobre 2026 | Livrables repris en début de séance 4 | Étapes 1 à 4 : base, variables, relations explorées, relations contrôlées | Rendus |
-| 13 octobre 2026 | Note de tests et de conception, version finale | Étape 5 : six fiches KPI, carte causale à quatre niveaux, recommandation du 6-10 lots (rapport de cotes ajusté 1,24 [1,06 ; 1,45]) | Rendue |
-| 17 octobre 2026 | Séance 4 | Présentation de la note par Ingryd et Sara, puis lancement du travail d'architecture décisionnelle | Faite |
-| Novembre 2026 | Livrable de la séance 4 | Note de modélisation, maquettes annotées des quatre vues et de la navigation, huit user stories, annexe sur le choix des six KPI | Rédigé, voir `livrables/` |
-| 19 novembre 2026 | Prototype HTML du tableau de bord | Fichier « Observatoire européen des marchés publics · Tableau de bord.html » déposé sur `main`, avec les vues 1 à 4 | Déposé, à confronter aux maquettes de la séance 4 |
-| À venir | Séance 5 | Déploiement du tableau de bord (Power BI ou autre outil) ; les trois règles transversales y seraient arbitrées sous contrainte technique | À faire |
+| A1 | Confirmer l'outil et l'URL publique : l'ouvrir en navigation privée, depuis un autre poste. Si le prototype HTML est conservé, le publier (par exemple GitHub Pages, le dépôt étant public). Ne pas utiliser Power BI sans validation écrite, et sans licence ni autorisation de publication sans authentification | URL inaccessible le 20/11 : 0 à tout le critère « Recette et déploiement » | [ ] |
+| A2 | Décider comment les mesures se recalculent. Option 1 : charger les lignes du fichier principal et calculer dans la page. Option 2 : un cube de comptages à granularité fine (pays × année × secteur × procédure × contrat × classes), dont numérateurs et dénominateurs s'additionnent exactement et dont le quotient est calculé à l'affichage. Les deux calculs modélisés (écart ajusté du KPI 4, indice d'anomalie) se préparent hors de l'outil et s'importent comme colonnes | La consigne interdit les agrégats figés ; un taux juste sans filtre et faux avec filtre est plus dangereux qu'une application vide | [ ] |
+| A3 | Confirmer l'état de la fiche de paramétrage des mesures, due le 14/11 | Livrable de fin de séance 5 | [ ] |
 
-Les dates de la séance 2 et du dépôt exact de la séance 4 sont à compléter si besoin.
+### B. Couche de mesures (4 points)
 
-## 4. Contenu du dépôt
+- [ ] Chaque indicateur est codé en numérateur, dénominateur et quotient séparés ; l'effectif s'affiche à côté ; seuil et comportement sous seuil appliqués (règles de la note de modélisation).
+- [ ] Valeurs de contrôle sans filtre retrouvées : taux de soumissionnaire unique, médiane des montants, part des PME parmi les renseignés. Tout écart est expliqué par le dédoublonnage ou le périmètre.
+- [ ] Trois valeurs filtrées recalculées à la main (un pays, une année) et comparées à l'écran, pour chaque indicateur.
+- [ ] Fiche de paramétrage à jour : formule, numérateur, dénominateur, effectif, seuil, comportement sous le seuil, valeur de contrôle obtenue.
+
+### C. Les quatre vues (13 points)
+
+- [ ] **Vue 1 (3 pts)** : six indicateurs au plus, trois axes, effectif visible sans clic, périmètre affiché dont la fenêtre 2016-2017 ; chaque filtre relié à une user story ; au moins un indicateur avancé (voir la correction sur le mot « prospectif »).
+- [ ] **Vue 3 (4 pts)** : par axe, A en montant en jeu avec paramètre de capacité N et montant cumulé couvert, procédures sans concurrence exclues ou signalées ; B avec le taux de renseignement de la variable PME ; C avec la strate élargie. Combiner trois filtres et vérifier l'affichage sous le seuil.
+- [ ] **Vue 2 (4 pts)** : pour chacun des trois axes, au moins une relation stratifiée avec les effectifs des deux groupes ; aucune formulation causale abusive.
+- [ ] **Vue 4 (2 pts)** : drill-down jusqu'à la ligne depuis les trois autres vues ; schéma de navigation de la séance 4 vérifié dans l'application réelle.
+
+### D. Corrections issues du retour (section 3)
+
+- [ ] Renommer et recalculer le KPI 4 par pays avec intervalle ; supprimer l'application d'un rapport figé sous filtre.
+- [ ] Élargir la strate de l'indice d'anomalie (pays, année, classe de lots, ou résidu de régression) ; fixer la liste qui sert à l'audit.
+- [ ] Corriger les chiffres (149 813 / 336 / 6 022), le renvoi « n° 15 » vers « n° 11 », le sort de la valeur 999, le statut de NOC.
+- [ ] Tester le montant pondéré sans le dernier centile avant de s'appuyer sur la story 12.
+- [ ] Réécrire les stories 1, 7, 10 et 12.
+
+### E. Recette et dépôt (3 points)
+
+- [ ] Cahier de recette : huit stories, résultat, temps, cause d'échec, correction ; le décideur politique échoue au-delà de deux minutes.
+- [ ] Un membre d'une autre équipe teste l'application sur une question qu'il formule lui-même.
+- [ ] Registre des écarts (une demi-page) : ce qui a changé entre maquette et application, écarts imposés par l'outil signalés comme tels.
+- [ ] Journal de bord à jour.
+- [ ] Test de l'URL en navigation privée, depuis un autre poste, la veille et le jour du dépôt.
+
+### F. Après le 20 novembre
+
+- [ ] Préparer la revue croisée de la séance 6 (l'application est auditée telle que livrée le 20).
+- [ ] Reporter les corrections dans les documents des séances suivantes (recommandations, soutenance).
+
+## 6. Consigne de la séance 4 (archive)
+
+Objectif : produire un plan, pas un prototype, sans outil de visualisation. Trois étapes, trois livrables.
+
+| Étape | Contenu | Livrable |
+| --- | --- | --- |
+| 1 · Modèle de données | Grain ; classement des six KPI (mesure, agrégat, indicateur) ; six dimensions (modalités, résiduelles, drill-down) ; trois règles transversales (seuil d'effectif, périmètre par défaut, répartition des deux fichiers) | Note de modélisation, 2 pages |
+| 2 · Quatre vues | Globale (où en sommes-nous ?), Analyse (pourquoi ?), Segmentation (où agir ?), Exploration (quel cas précis ?), plus une feuille de navigation ; par bloc : indicateur, dénominateur, effectif minimal, visualisation, justification | 5 feuilles annotées |
+| 3 · User stories | Huit stories au format « En tant que…, je veux…, afin de… » avec quatre champs ; deux par axe, trois profils, une story multi-vues | Un tableau |
+
+Grille de la séance 4 : modèle et règles transversales (5), architecture des quatre vues (6), justification des encodages (4), user stories (5).
+
+## 7. Contenu du dépôt
 
 | Chemin | Contenu |
 | --- | --- |
-| `livrables/S4_BI_Livrable_Observatoire_marches_publics.docx` | Livrable unifié de la séance 4 : note de modélisation, maquettes annotées, user stories, annexe « Pourquoi ces six KPI » |
+| `livrables/S4_BI_Livrable_Observatoire_marches_publics.docx` | Rendu 4 : note de modélisation, maquettes annotées, user stories, annexe « Pourquoi ces six KPI » |
 | `Observatoire européen des marchés publics · Tableau de bord.html` | Prototype HTML du tableau de bord (vues 1 à 4), déposé sur `main` |
 | `docs/superpowers/specs/2026-11-04-s4-architecture-dashboard-design.md` | Plan de travail de la séance 4 : intention, contraintes, méthode, arbitrages |
 | `README.md` | Ce fichier |
 
-## 5. Décisions clés
+## 8. Décisions clés
 
-**Les six KPI**, deux par axe : l'état, puis le levier ou le ciblage.
+**Les six KPI**, deux par axe : l'état, puis le levier ou le ciblage. Les libellés du KPI 4 et de l'indice d'anomalie sont à revoir (section 3).
 
 | Axe | KPI | Type | Lien qui le fonde | Action déclenchée |
 | --- | --- | --- | --- | --- |
 | A | 1 · Taux d'offre unique, procédure ouverte | indicateur | associatif | entre dans les 20 dossiers |
 | A | 2 · Médiane des offres | agrégat non additif | associatif faible | liste de surveillance |
 | B | 3 · Part de PME, 2016-2017 | indicateur | associatif | revue d'allotissement |
-| B | 4 · Gain simulé du 6-10 lots | indicateur simulé | causal plausible (R3) | recommandation 6-10 lots |
+| B | 4 · Gain simulé du 6-10 lots (à renommer : écart ajusté) | indicateur simulé | association ajustée, hétérogène | recommandation 6-10 lots, là où l'effet est estimé |
 | C | 5 · Montant total pondéré | agrégat additif | descriptif | vérifier la queue avant l'audit |
 | C | 6 · Indice d'anomalie (z en log10) | mesure stockée | associatif | liste d'audit |
 
@@ -120,16 +197,18 @@ Les dates de la séance 2 et du dépôt exact de la séance 4 sont à compléter
 
 1. Seuil d'effectif par KPI : 100 marchés pour les KPI 1 à 3, 100 non-allotis pour le KPI 4, 30 attributions pour le KPI 5, 30 marchés par strate pour le KPI 6. Sous le seuil, la case affiche « effectif insuffisant ».
 2. Périmètre par défaut : fichier principal ; procédure ouverte pour les KPI 1 et 2 ; fenêtre 2016-2017 verrouillée pour les KPI 3 et 4, qui ignorent le filtre d'année global.
-3. Deux fichiers : le principal alimente les vues 1 à 3 ; les procédures rares n'apparaissent qu'en vue 4, lues procédure par procédure, sans jamais être additionnées.
+3. Deux fichiers : le principal alimente les vues 1 à 3 ; les procédures rares n'apparaissent qu'en vue 4, lues procédure par procédure, sans jamais être additionnées (erreur sanctionnée n° 11 du cours).
 
-**Un seul lien survit au contrôle des confondants** : le passage à 6-10 lots et la part de PME (R3). Les autres relations servent à cibler et à surveiller, pas à recommander.
+**Un seul lien survit au contrôle des confondants** : le passage à 6-10 lots et la part de PME (R3), et il reste fragile (inversé en Allemagne et au Royaume-Uni). Les autres relations servent à cibler et à surveiller, pas à recommander.
 
-## 6. Points à vérifier dans les données
+## 9. Points à vérifier dans les données
 
-Tous les chiffres viennent de la note de la séance 3 et n'ont pas été recalculés.
+Les chiffres des documents viennent de la note de la séance 3 ; l'évaluateur a recalculé les principaux, qui sont justes.
 
+- **Effectifs.** 150 147 − 149 813 = 334 et 6 024 − 6 022 = 2, soit 336 doublons au total : cohérent si les deux fichiers sont dédoublonnés (334 dans le principal, 2 dans les rares). À confirmer dans les données et à écrire noir sur blanc, car la note ne l'explique pas.
 - Bornes exactes des classes de valeur et de lots (règle 11 du nettoyage) et nombre de divisions CPV.
 - Les deux modalités sans information du type d'acheteur, regroupées en « Non précisé ».
 - Dénominateurs de la part des pays dans la liste d'audit : 149 813 pour le Royaume-Uni, 149 218 pour la Pologne.
+- Sort de la valeur 999 pour le nombre d'offres, et statut de la procédure NOC.
 - Le suivi de la recommandation est annuel : le fichier n'a pas de donnée infra-annuelle.
 - La fiche du KPI 2 qualifie la médiane d'« indicateur avancé » qui « précède » l'offre unique : aucun test dans le temps ne le soutient, écrire « associée à ».
