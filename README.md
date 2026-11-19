@@ -87,6 +87,7 @@ Le projet compte pour 50 % de la note (60 % jury, 20 % épreuve de requêtes de 
 | 13 octobre 2026 | Note de tests et de conception, version finale | Étape 5 : six fiches KPI, carte causale à quatre niveaux, recommandation du 6-10 lots (rapport de cotes ajusté 1,24 [1,06 ; 1,45]) | Rendue |
 | 17 octobre 2026 | Séance 4 | Présentation de la note par Ingryd et Sara, puis lancement du travail d'architecture décisionnelle | Faite |
 | Novembre 2026 | Livrable de la séance 4 | Note de modélisation, maquettes annotées des quatre vues et de la navigation, huit user stories, annexe sur le choix des six KPI | Rédigé, voir `livrables/` |
+| 19 novembre 2026 | Prototype HTML du tableau de bord | Fichier « Observatoire européen des marchés publics · Tableau de bord.html » déposé sur `main`, avec les vues 1 à 4 | Déposé, à confronter aux maquettes de la séance 4 |
 | À venir | Séance 5 | Déploiement du tableau de bord (Power BI ou autre outil) ; les trois règles transversales y seraient arbitrées sous contrainte technique | À faire |
 
 Les dates de la séance 2 et du dépôt exact de la séance 4 sont à compléter si besoin.
@@ -96,6 +97,7 @@ Les dates de la séance 2 et du dépôt exact de la séance 4 sont à compléter
 | Chemin | Contenu |
 | --- | --- |
 | `livrables/S4_BI_Livrable_Observatoire_marches_publics.docx` | Livrable unifié de la séance 4 : note de modélisation, maquettes annotées, user stories, annexe « Pourquoi ces six KPI » |
+| `Observatoire européen des marchés publics · Tableau de bord.html` | Prototype HTML du tableau de bord (vues 1 à 4), déposé sur `main` |
 | `docs/superpowers/specs/2026-11-04-s4-architecture-dashboard-design.md` | Plan de travail de la séance 4 : intention, contraintes, méthode, arbitrages |
 | `README.md` | Ce fichier |
 
